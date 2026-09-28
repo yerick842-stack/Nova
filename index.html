@@ -35,7 +35,7 @@
             background-color: #09090b;
             color: #f4f4f5;
             font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            padding-bottom: 90px;
+            padding-bottom: 100px;
         }
         .glow-btn {
             background: linear-gradient(135deg, #6366f1 0%, #3b82f6 100%);
@@ -51,6 +51,10 @@
         .nav-item.active {
             color: #818cf8;
         }
+        /* Estilos estilo Terminal Hacker */
+        .terminal-font {
+            font-family: 'Courier New', Courier, monospace;
+        }
     </style>
 </head>
 <body class="min-h-screen flex flex-col items-center justify-start p-4 sm:p-6 max-w-md mx-auto">
@@ -63,8 +67,15 @@
             </div>
             <span class="font-bold text-lg tracking-wide">Nova Si</span>
         </div>
-        <div class="text-xs text-zinc-400 bg-zinc-900 border border-zinc-800 px-3 py-1 rounded-full">
-            MX
+        <div class="flex items-center gap-2">
+            <!-- Botón para abrir la Terminal de Admin (Protegida) -->
+            <button onclick="toggleTerminal()" title="Terminal Admin" class="p-1.5 bg-zinc-900 border border-zinc-800 text-green-400 hover:text-green-300 rounded-full text-xs flex items-center gap-1 px-2.5">
+                <i data-lucide="lock" class="w-3.5 h-3.5"></i>
+                <span class="text-[10px] font-mono">Admin</span>
+            </button>
+            <div class="text-xs text-zinc-400 bg-zinc-900 border border-zinc-800 px-3 py-1 rounded-full">
+                MX
+            </div>
         </div>
     </header>
 
@@ -127,9 +138,19 @@
                 </div>
             </div>
         </section>
+
+        <!-- Sección de Contacto -->
+        <section class="w-full bg-cardBg border border-cardBorder rounded-4xl p-5 text-center space-y-3">
+            <h3 class="text-sm font-bold text-zinc-300">¿Tienes dudas o necesitas soporte?</h3>
+            <p class="text-xs text-zinc-400">Contáctanos directamente vía WhatsApp</p>
+            <a href="https://wa.me/526711089134?text=Hola,%20tengo%20una%20consulta%20sobre%20Nova%20Si" target="_blank" class="inline-flex items-center justify-center gap-2 w-full py-2.5 px-4 bg-emerald-600 hover:bg-emerald-500 text-white font-medium text-xs rounded-full transition shadow-lg shadow-emerald-900/30">
+                <i data-lucide="message-circle" class="w-4 h-4"></i>
+                <span>Escribir a WhatsApp (+52 671 108 9134)</span>
+            </a>
+        </section>
     </main>
 
-    <!-- Pestaña 2: Nueva consulta IA (+) con opción de adjuntar archivo -->
+    <!-- Pestaña 2: Nueva consulta IA (+) -->
     <section id="tab-ia" class="hidden w-full bg-cardBg border border-cardBorder rounded-4xl p-6 space-y-4 text-left">
         <div class="border-b border-zinc-800 pb-3">
             <h3 class="text-xl font-bold text-indigo-400 flex items-center gap-2">
@@ -142,7 +163,6 @@
         <div class="space-y-3 pt-2">
             <textarea id="ia-tab-input" rows="4" class="w-full bg-zinc-900 border border-zinc-800 rounded-2xl p-3 text-sm text-zinc-200 focus:outline-none focus:border-indigo-500 placeholder-zinc-500" placeholder="Escribe tu consulta o adjunta un archivo/PDF/foto..."></textarea>
 
-            <!-- Contenedor para adjuntar archivos -->
             <div class="flex items-center justify-between bg-zinc-900 border border-zinc-800 rounded-2xl px-4 py-2">
                 <label for="file-upload" class="flex items-center gap-2 text-xs text-indigo-400 cursor-pointer hover:text-indigo-300 font-medium">
                     <i data-lucide="paperclip" class="w-4 h-4"></i>
@@ -175,8 +195,46 @@
         <div class="flex justify-between items-center bg-zinc-900 border border-zinc-800 p-4 rounded-2xl text-xs text-zinc-400">
             <span>LUN</span><span>MAR</span><span class="text-orange-500 font-bold text-sm">MIÉ</span><span>JUE</span><span>VIE</span><span>SÁB</span><span>DOM</span>
         </div>
-        <p class="text-xs text-zinc-500 pt-2">Nova Si - developed by yerick and dix.lat</p>
+
+        <div class="pt-4 border-t border-zinc-800/80 space-y-2">
+            <p class="text-xs text-zinc-400">Contacto de Soporte:</p>
+            <a href="https://wa.me/526711089134" target="_blank" class="text-xs text-emerald-400 hover:underline flex items-center justify-center gap-1">
+                <i data-lucide="phone" class="w-3 h-3"></i> +52 671 108 9134
+            </a>
+            <p class="text-[10px] text-zinc-500">Nova Si - developed by yerick and dix.lat</p>
+        </div>
     </section>
+
+    <!-- MODAL: CONSOLA DE ADMIN TIPO TERMINAL -->
+    <div id="terminal-modal" class="hidden fixed inset-0 bg-black/90 backdrop-blur-md z-50 flex items-center justify-center p-3">
+        <div class="w-full max-w-md bg-black border border-green-500/50 rounded-2xl p-4 space-y-3 font-mono text-xs shadow-2xl shadow-green-950">
+            <!-- Barra Superior Terminal -->
+            <div class="flex justify-between items-center border-b border-green-900 pb-2 text-green-500">
+                <div class="flex items-center gap-2">
+                    <span class="w-2.5 h-2.5 rounded-full bg-red-500 inline-block"></span>
+                    <span class="w-2.5 h-2.5 rounded-full bg-yellow-500 inline-block"></span>
+                    <span class="w-2.5 h-2.5 rounded-full bg-green-500 inline-block"></span>
+                    <span class="ml-2 text-[10px] text-green-400">nova-admin-console v1.0</span>
+                </div>
+                <button onclick="closeTerminal()" class="text-green-500 hover:text-white">
+                    <i data-lucide="x" class="w-4 h-4"></i>
+                </button>
+            </div>
+
+            <!-- Salida de la Terminal -->
+            <div id="terminal-logs" class="h-64 overflow-y-auto space-y-1 text-green-400 terminal-font p-1 bg-zinc-950/80 rounded border border-zinc-900">
+                <div>[SYSTEM] Nova Si Admin Shell inicializada...</div>
+                <div>[AUTH] Autenticación completada con éxito.</div>
+                <div>Escribe <span class="text-yellow-400">'help'</span> para ver la lista de comandos disponibles.</div>
+            </div>
+
+            <!-- Input Comandos -->
+            <div class="flex items-center gap-2 pt-1 border-t border-green-900">
+                <span class="text-green-500 font-bold">admin@nova:~$</span>
+                <input id="terminal-input" type="text" onkeydown="handleTerminalCommand(event)" class="w-full bg-transparent text-green-300 focus:outline-none terminal-font text-xs" placeholder="Escribe un comando..." autofocus>
+            </div>
+        </div>
+    </div>
 
     <!-- Modal Herramientas -->
     <div id="tool-modal" class="hidden fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
@@ -217,6 +275,7 @@
 
         let activeTool = "";
         let attachedFileText = "";
+        let isAdminAuthenticated = false;
 
         function switchTab(tabId) {
             document.getElementById('tab-home').classList.add('hidden');
@@ -232,20 +291,59 @@
             if(tabId === 'tab-streak') document.getElementById('nav-streak').classList.add('active');
         }
 
-        function openToolModal(title, desc) {
-            activeTool = title;
-            document.getElementById('modal-title').innerText = title;
-            document.getElementById('modal-desc').innerText = desc;
-            document.getElementById('modal-input').value = '';
-            document.getElementById('modal-output').classList.add('hidden');
-            document.getElementById('tool-modal').classList.remove('hidden');
+        /* LÓGICA DE PROTECCIÓN Y TERMINAL ADMIN */
+        function toggleTerminal() {
+            const modal = document.getElementById('terminal-modal');
+
+            if (!isAdminAuthenticated) {
+                const pass = prompt("Ingrese la contraseña de Administrador:");
+                if (pass === "sanchez15$") {
+                    isAdminAuthenticated = true;
+                    modal.classList.remove('hidden');
+                    document.getElementById('terminal-input').focus();
+                } else if (pass !== null) {
+                    alert("Acceso Denegado: Contraseña incorrecta.");
+                }
+            } else {
+                modal.classList.remove('hidden');
+                document.getElementById('terminal-input').focus();
+            }
         }
 
-        function closeToolModal() {
-            document.getElementById('tool-modal').classList.add('hidden');
+        function closeTerminal() {
+            document.getElementById('terminal-modal').classList.add('hidden');
         }
 
-        // Manejador de Archivos (PDF y Texto)
+        function handleTerminalCommand(e) {
+            if (e.key === 'Enter') {
+                const input = document.getElementById('terminal-input');
+                const cmd = input.value.trim().toLowerCase();
+                const logs = document.getElementById('terminal-logs');
+
+                logs.innerHTML += `<div class="text-white"><span class="text-green-500">admin@nova:~$</span> ${input.value}</div>`;
+
+                if (cmd === 'help') {
+                    logs.innerHTML += `<div class="text-zinc-400">Comandos disponibles:<br>- status : Estado del sistema<br>- info   : Información de desarrolladores y soporte<br>- clear  : Limpiar pantalla<br>- ping   : Probar tiempo de respuesta<br>- version: Ver versión actual</div>`;
+                } else if (cmd === 'status') {
+                    logs.innerHTML += `<div class="text-emerald-400">[ONLINE] Servidor de IA operando al 100%. Latencia: 24ms.</div>`;
+                } else if (cmd === 'info') {
+                    logs.innerHTML += `<div class="text-cyan-400">Proyecto: Nova Si<br>Devs: Yerick & Dix.lat<br>Soporte WhatsApp: +52 671 108 9134</div>`;
+                } else if (cmd === 'ping') {
+                    logs.innerHTML += `<div class="text-yellow-400">PONG! Respuesta en 0.02s</div>`;
+                } else if (cmd === 'version') {
+                    logs.innerHTML += `<div class="text-purple-400">Nova Si Engine v2.5 (Protected Admin Shell)</div>`;
+                } else if (cmd === 'clear') {
+                    logs.innerHTML = '';
+                } else if (cmd !== '') {
+                    logs.innerHTML += `<div class="text-red-400">Comando no reconocido '${cmd}'. Escribe 'help'.</div>`;
+                }
+
+                input.value = '';
+                logs.scrollTop = logs.scrollHeight;
+            }
+        }
+
+        // Manejador de Archivos
         async function handleFileUpload(event) {
             const file = event.target.files[0];
             if (!file) return;
@@ -294,6 +392,19 @@
             } finally {
                 btn.disabled = false;
             }
+        }
+
+        function openToolModal(title, desc) {
+            activeTool = title;
+            document.getElementById('modal-title').innerText = title;
+            document.getElementById('modal-desc').innerText = desc;
+            document.getElementById('modal-input').value = '';
+            document.getElementById('modal-output').classList.add('hidden');
+            document.getElementById('tool-modal').classList.remove('hidden');
+        }
+
+        function closeToolModal() {
+            document.getElementById('tool-modal').classList.add('hidden');
         }
 
         async function askNovaFromModal() {
